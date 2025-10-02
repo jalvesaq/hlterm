@@ -18,16 +18,8 @@
 let s:plugin_home = expand("<sfile>:h:h")
 
 function cmdline#Init()
-    " Set option
-    if has("nvim")
-        let g:cmdline_in_buffer = get(g:, 'cmdline_in_buffer', 1)
-    else
-        let g:cmdline_in_buffer = 0
-    endif
-
-    " Set other options
+    " Set options
     let g:cmdline_vsplit = get(g:, 'cmdline_vsplit', 0)
-    let g:cmdline_esc_term = get(g:, 'cmdline_esc_term', 1)
     let g:cmdline_term_width = get(g:, 'cmdline_term_width', 40)
     let g:cmdline_term_height = get(g:, 'cmdline_term_height', 15)
     if has("win32") && isdirectory($TMP)
@@ -36,7 +28,6 @@ function cmdline#Init()
         let g:cmdline_tmp_dir = get(g:, 'cmdline_tmp_dir', '/tmp/cmdline_' . localtime() . '_' . $USER)
     endif
     let g:cmdline_outhl = get(g:, 'cmdline_outhl', 1)
-    let g:cmdline_auto_scroll = get(g:, 'cmdline_auto_scroll', 1)
     let g:cmdline_actions = get(g:, 'cmdline_actions', {})
 
     " Internal variables
@@ -199,9 +190,9 @@ function cmdline#Start_Zellij(app)
         return
     endif
 
-    " Refocus nvim after creating the new pane
-    let focus_nvim = "zellij action focus-previous-pane"
-    call system(focus_nvim)
+    " Refocus Vim after creating the new pane
+    let focus_vim = "zellij action focus-previous-pane"
+    call system(focus_vim)
     if v:shell_error
         echohl ErrorMsg
         echomsg "ERROR: Focus command failed with error: " . v:shell_error
@@ -240,43 +231,6 @@ function cmdline#Start_Tmux(app)
         return
     endif
     let s:cmdline_app_pane = paneid
-endfunction
-
-" Run the interpreter in a Neovim terminal buffer
-function cmdline#Start_Nvim(app, ft)
-    let edbuf = bufname("%")
-    let thisft = b:cmdline_filetype
-    if has_key(g:cmdline_job, b:cmdline_filetype) && g:cmdline_job[b:cmdline_filetype]
-        return
-    endif
-    set switchbuf=useopen
-    if g:cmdline_vsplit
-        if g:cmdline_term_width > 16 && g:cmdline_term_width < (winwidth(0) - 16)
-            silent exe "belowright " . g:cmdline_term_width . "vnew"
-        else
-            silent belowright vnew
-        endif
-    else
-        if g:cmdline_term_height > 6 && g:cmdline_term_height < (winheight(0) - 6)
-            silent exe "belowright " . g:cmdline_term_height . "new"
-        else
-            silent belowright new
-        endif
-    endif
-    let g:cmdline_job[thisft] = termopen(a:app, {'on_exit': function('cmdline#JobExit')})
-    let g:cmdline_termbuf[thisft] = bufname("%")
-    if g:cmdline_esc_term
-        tnoremap <buffer> <Esc> <C-\><C-n>
-    endif
-    if ((type(g:cmdline_outhl) == v:t_number || type(g:cmdline_outhl) == v:t_bool) && g:cmdline_outhl) ||
-                \ (type(g:cmdline_outhl) == v:t_dict &&
-                \ (!has_key(g:cmdline_outhl, a:ft) ||
-                \ (has_key(g:cmdline_outhl, a:ft) && g:cmdline_outhl[a:ft])))
-        exe 'runtime syntax/cmdlineoutput_' . a:ft . '.vim'
-    endif
-    normal! G
-    exe "sbuffer " . edbuf
-    stopinsert
 endfunction
 
 function cmdline#CreateMaps(lng)
@@ -334,9 +288,7 @@ function cmdline#StartApp()
     if exists("g:cmdline_external_term_cmd")
         call cmdline#Start_ExTerm(b:cmdline_app)
     else
-        if g:cmdline_in_buffer
-            call cmdline#Start_Nvim(b:cmdline_app, lng)
-        elseif g:cmdline_use_zellij
+        if g:cmdline_use_zellij
             call cmdline#Start_Zellij(b:cmdline_app)
         else
             call cmdline#Start_Tmux(b:cmdline_app)
@@ -347,16 +299,6 @@ endfunction
 " Send a single line to the interpreter
 function cmdline#SendCmd(...)
     if has_key(g:cmdline_job, b:cmdline_filetype) && g:cmdline_job[b:cmdline_filetype]
-        if g:cmdline_auto_scroll && (!exists('b:cmdline_quit_cmd') || a:1 != b:cmdline_quit_cmd)
-            let isnormal = mode() ==# 'n'
-            let curwin = winnr()
-            exe "sb " . g:cmdline_termbuf[b:cmdline_filetype]
-            call cursor('$', 1)
-            exe curwin . 'wincmd w'
-            if isnormal
-                stopinsert
-            endif
-        endif
         if exists('*chansend')
             call chansend(g:cmdline_job[b:cmdline_filetype], a:1 . b:cmdline_nl)
         else
