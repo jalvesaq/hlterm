@@ -1,0 +1,250 @@
+*hlterm.txt*                                                        *hlterm*
+                                 hlterm
+                          Send lines to interpreter
+
+Author: Jakson A. Aquino <jalvesaq@gmail.com>
+
+ 1. Overview                                                 |hlterm_overview|
+ 2. Usage                                                       |hlterm_usage|
+ 3. Options                                                   |hlterm_options|
+    3.1 Change the default mappings                          |hlterm_mappings|
+    3.2 Change output colors                                   |hlterm_colors|
+    3.3 Other options
+        Split the window vertically
+        Remap <Esc> to :stopinsert in Neovim's terminal
+        Start the interpreter in a Neovim's terminal
+        Height of interpreter window or pane
+        Width of interpreter window or pane
+        Temporary directory
+        Keep the cursor at the end of terminal
+        Set the application to run as interpreter
+        Set actions for each interpreter
+        Run interpreter in external terminal
+
+
+==============================================================================
+1. Overview                                                  *hlterm_overview*
+
+This plugin sends lines from Neovim to a command line interpreter (REPL
+application). The interpreter runs in Neovim's built-in terminal. If Tmux or
+Zellij is installed, the interpreter can also run in an external terminal
+emulator (tmux-only feature) or in a tmux/zellij pane. If running in either a
+Neovim built-in terminal or an external terminal, the plugin runs one instance
+of the REPL application for each file type. If running in a tmux or zellij
+pane, it runs one REPL application for Neovim instance.
+
+
+==============================================================================
+2. Usage                                                        *hlterm_usage*
+
+If you are editing one of the supported file types, in Normal mode do:
+
+  - <LocalLeader>s to start the interpreter.
+
+  - <Enter> to send the current line to the interpreter.
+
+  - <LocalLeader><Enter> to send the current line to the interpreter and
+    keep the cursor on the current line.
+
+  - <LocalLeader>q to send the quit command to the interpreter.
+
+
+  - In Visual mode, press:
+
+    - <Enter> to send a selection of text to the interpreter.
+
+  - And, in Normal mode, press:
+
+    - <LocalLeader>p to send from the line to the end of paragraph.
+
+    - <LocalLeader>b to send block of code between the two closest marks.
+
+    - <LocalLeader>f to send the entire file to the interpreter.
+
+    - <LocalLeader>m to send the text in the following motion to the
+      interpreter. For example, <LocalLeader>m3j would send three lines.
+
+See |hlterm_mappings| below to learn how to configure different key maps.
+
+Your `~/.inputrc` should not include `set keymap vi` because it would cause
+some applications to start in vi's edit mode. Then, you would always have to
+press either `a` or `i` in the interpreter console before using it.
+
+
+==============================================================================
+3. Options                                                    *hlterm_options*
+
+------------------------------------------------------------------------------
+3.1 Change the default mappings                              *hlterm_mappings*
+
+Below are examples of how to change the default mappings in your hlterm
+config:
+>lua
+ mappings = {
+     start          = '<LocalLeader>s',
+     send           = '<Space>',
+     send_and_stay  = '<LocalLeader><Space>',
+     send_paragraph = '<LocalLeader>p',
+     send_block     = '<LocalLeader>b',
+     send_file      = '<LocalLeader>f',
+     send_motion    = '<LocalLeader>m',
+     quit           = '<LocalLeader>q',
+ },
+<
+------------------------------------------------------------------------------
+3.2 Change output colors                                       *hlterm_colors*
+
+You can use Neovim's syntax highlight capabilities to colorize the interpreter
+output, and you can customize the colors in your config, as in the example
+below (see |nvim_set_hl| for the complete list of valid fields):
+
+>lua
+ output_colors = {
+     Complex   = { fg = "#00ffff" },
+     Constant  = { fg = "#5fafff" },
+     Date      = { fg = "#00d7af" },
+     Error     = { fg = "#ff0000", bg = "#ffffff" },
+     Float     = { fg = "#00ffff" },
+     Index     = { fg = "#d7d787" },
+     Inf       = { fg = "#00afff" },
+     Input     = { fg = "#9e9e9e", italic = true },
+     Integer   = { fg = "#00ffff" },
+     False     = { fg = "#ff5f5f" },
+     True      = { fg = "#5fd787" },
+     Negfloat  = { fg = "#d7afff" },
+     Negnum    = { fg = "#d7afff" },
+     Normal    = { fg = "#00afff" },
+     Number    = { fg = "#00ffff" },
+     String    = { fg = "#5fd7af" },
+     Warn      = { fg = "#c0ffff", bold = true },
+ },
+<
+If you want to completely disable the colorizing of the interpreter output,
+put in your config:
+>lua
+ highlight = false,
+<
+You can also indicate for each file type whether it should have the output of
+its interpreter highlighted or not. Example:
+>lua
+ out_hl = {
+     r = false,          -- The R package `colorout` is better
+     javascript = false, -- `node` colorizes the output
+ },
+<
+If you prefer that the output is highlighted using your current |colorscheme|,
+put in your config:
+>lua
+ follow_colorscheme = true,
+<
+
+------------------------------------------------------------------------------
+3.3 Other options
+
+By default, hlterm will split the window horizontally before starting the
+interpreter. If you prefer to split it vertically, put in your config:
+>lua
+ vsplit = true,
+<
+In the built-in terminal, you should have to press <C-\><C-N> to go from
+Terminal mode to Normal mode, but hlterm maps <Esc> to go to Normal mode
+in the built-in terminal. If you rather prefer that the <Esc> key is passed to
+the interpreter, put in your config:
+>lua
+ esc_term = false,
+<
+If you are running Neovim, the interpreter will be started in its built-in
+terminal. If you prefer to start it in a Tmux or Zellij split pane, put in your
+config one of these options:
+>lua
+ use_tmux = true,
+ use_zellij = true,
+<
+Note: These options requires that you are already running inside a Tmux or
+Zellij session.
+
+The terminal height will be 15 lines, but you can change it in your config:
+>lua
+ term_height = 25,
+<
+If splitting the window vertically, the terminal width will be 80 columns if
+the current window has more than 160 columns. You can set a different value in
+your config:
+>lua
+ term_width = 90,
+<
+Hlterm uses the current time and the user name to create a unique
+temporary directory for each Neovim instance, but you can define a different
+temporary directory in your config:
+>lua
+ tmp_dir = '/tmp',
+<
+Neovim's terminal will automatically scroll when there is new output only if
+the cursor is in the last line of the terminal buffer. Hlterm puts the
+cursor in the last line of the terminal buffer before sending a new line to it
+to ensure the automatic scroll. If you rather prefer the default behavior, put
+in your config:
+>lua
+ auto_scroll = false,
+<
+You can define what application will be run as the interpreter for each
+supported file type. If you want to do this, create a Lua table called `app`,
+and add items with the 'filetype' as key and the interpreter as value, as in
+the example:
+>lua
+ app = {
+     sh = 'bash',
+     r = 'ssh -t user@remote-machine R --no-save',
+     ruby = "pry",
+     python = '~/.py3env/bin/python3',
+ },
+<
+You cand set special commands to be sent to the interpreters. Examples for R
+and Python (for |init.lua|):
+>lua
+ actions = {
+     r = {
+         {'<LocalLeader>l', 'ls()'},
+         {'<LocalLeader>s', 'summary(%s)'},
+         {'<LocalLeader>r', 'print(%s)'},
+         {'<LocalLeader>t', 'str(%s)'},
+         {'<LocalLeader>h', 'help(%s)'},
+         {'<LocalLeader>a', 'args(%s)'},
+     },
+     python = {
+         {'<LocalLeader>l', 'locals()'},
+         {'<LocalLeader>g', 'globals()'},
+         {'<LocalLeader>p', 'print(%s)'},
+         {'<LocalLeader>t', 'type(%s)'},
+         {'<LocalLeader>d', 'dir(%s)'},
+     }
+ },
+<
+The `actions` variable is a Lua table. Each item has a 'filetype' as key and
+is a list of two elements: the key combination and the command to be sent to
+the interpreter. The string "%s" is replaced with the word under cursor (the
+result of the Vim command `expand('<cword>')`).
+
+If you want to run the interpreter in an external terminal emulator, you have
+to define in your config the command to run it, as in the examples:
+>lua
+ external_term_cmd = "gnome-terminal -- '%s'"
+ external_term_cmd = 'kitty %s'
+ external_term_cmd = "wezterm cli split-pane -- %s",
+<
+where `%s` will be replaced with the terminal command required to run the REPL
+application in a tmux session. Note that `gnome-terminal` does not require an
+`&` at the end of the command because it forks immediately after startup and
+that `kitty` only works if `%s` is not between quotation marks.
+
+When running in an external terminal emulator, hlterm requires Tmux to
+work, and it generates a tmux.conf for its tmux session. If you rather prefer to
+write and use your own tmux.conf, you should define its path as in the
+example:
+>lua
+ tmux_conf = "~/hlterm_tmux.conf"
+<
+
+
+
+                         vim:tw=78:ts=8:ft=help:norl

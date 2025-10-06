@@ -1,12 +1,18 @@
-# vimcmdline: Send lines to interpreter
+# hlterm: Send code to Neovim's terminal and highlight the output
 
-This plugin sends lines from either [Vim] or [Neovim] to a command line
+**Notes:**
+
+- `hlterm` is the `vimcmdline` plugin converted from VimScript to Lua.
+
+- `hlterm` only works in Neovim, but Vim users can use the branch "vim".
+
+This plugin sends lines from [Neovim] to a command line
 interpreter (REPL application). There is support for
 Clojure, Golang, Haskell, JavaScript, Julia, Jupyter, Kotlin, Lisp,
 Lua, Macaulay2, Matlab, Prolog, Python, R, Racket, Ruby, Sage,
 Scala, Shell script, Swift, Kdb/q and TypeScript
 (see [R.nvim] for a more compreehsive support for R in Neovim).
-If the file type is `quarto`, `vimcmdline` will try to infer what interpreter
+If the file type is `quarto`, `hlterm` will try to infer what interpreter
 should be started.
 
 The interpreter runs in Neovim's built-in terminal.
@@ -20,65 +26,74 @@ general output, positive and negative numbers, and the prompt line:
 
 If running in either a Neovim built-in terminal or an external terminal, the
 plugin runs one instance of the REPL application for each file type. If
-running in a tmux or zellij pane, it runs one REPL application for Vim instance.
-
-Support for running the interpreter in Vim's built-in terminal was not
-implemented.
-I have never adapted the plugin to run the interpreter within Vim's built-in
-terminal (as it does in Neovim) because Vim cannot colorize the output printed
-in its terminal.
+running in a tmux or zellij pane, it runs one REPL application for Neovim instance.
 
 ## How to install
 
-Use a plugin manager to install vimcmdline.
+Use a plugin manager to install hlterm.
 
 You need to install either Tmux or Zellij if you want to run the interpreter in
 a split pane. Note that external terminal emulator support requires Tmux
-specifically. If you are using Vim (not Neovim), you must have Tmux installed.
+specifically.
 
 
 ## Usage and options
 
+In Normal mode, type `<LocalLeader>s` to start the interpreter.
+
 Please, read the plugin's
-[documentation](https://raw.githubusercontent.com/jalvesaq/vimcmdline/master/doc/vimcmdline.txt)
+[documentation](https://raw.githubusercontent.com/jalvesaq/hlterm/master/doc/hlterm.txt)
 for further instructions.
 
 
 ## How to add support for a new language
 
-  1. Look at the Vim scripts in the `ftplugin` directory and make a copy of
-     the script supporting the language closer to the language that you want
-     to support.
+  1. Look at the Lua scripts in the `ftplugin` directory and make a copy of
+     the one closer to the language that you want to support.
 
-  2. Save the new script with the name "filetype\_cmdline.vim" where
+  2. Save the new script with the name "filetype\_hlterm.lua" where
      "filetype" is the output of `:echo &filetype` when you are editing a
      script of the language that you want to support.
 
   3. Edit the new script and change the values of its variables as necessary.
 
-  4. Test your new file-type script by running your application in either Vim
-     or Neovim and using either the built-in terminal or a Tmux/Zellij split
-     pane.
+  4. Test your new file-type script by running your application in Neovim.
 
-  5. Look at the Vim scripts in the `syntax` directory and make a copy of the
-     script supporting the language whose output is closer to the output of
-     the language that you want to support.
-
-  6. Save the new script with the name "cmdlineoutput\_filetype.vim" where
-     "filetype" is the output of `:echo &filetype`.
-
-  7. Edit the new script and change both the pattern used to recognize the
-     input line and the pattern used to recognize errors.
-
-  8. Test your new syntax highlighting script by running your application in a
+  5. Test your new output highlighting by running your application in a
      Neovim built-in terminal.
+
+When editing your new file-type script, keep in mind that the goal is to
+highlight the output, not the language. The code is properly highlighted in
+the editor. In the terminal, we want to focus in the output and not be
+distracted by a colorful input. Change the patterns used to recognize the
+input line, errors, warnings, and the keywords that identify boolean values
+and constants (such as `None` in Python, `nil` in Lua, and `NULL` and `NA` in
+R).
+
+String delimiters are not what the language accepts as input, but what it
+outputs. For example, in Python
+
+```python
+txt = "abc"
+txt
+```
+
+outputs `'abc'` while in R
+
+```r
+txt <- 'abc'
+txt
+```
+
+outputs `[1] "abc"`.
+Hence, the string delimiter is `'` in Python and `"` in R.
+
 
 ## See also
 
 Similar plugins are [toggleterm.nvim], [iron.nvim], [vim-slime], [neoterm],
 [sniprun], [conjure], and [yarepl.nvim].
 
-[Vim]: http://www.vim.org
 [Neovim]: https://github.com/neovim/neovim
 [R.nvim]: https://github.com/R-nvim/R.nvim
 [toggleterm.nvim]: https://github.com/akinsho/toggleterm.nvim
