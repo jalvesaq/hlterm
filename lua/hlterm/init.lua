@@ -561,10 +561,8 @@ local function send_cmd_exterm(ft, txt)
         return
     end
 
-    local scmd = "tmux -L HlTerm set-buffer '" .. txt .. "\13'"
-    vim.fn.system(scmd)
-    scmd = "tmux -L HlTerm paste-buffer -t hlterm" .. ft .. ".0"
-    vim.fn.system(scmd)
+    vim.fn.system({ "tmux", "-L", "HlTerm", "set-buffer", txt .. "\r" })
+    vim.fn.system({ "tmux", "-L", "HlTerm", "paste-buffer", "-t", "hlterm" .. ft .. ".0" })
     if vim.v.shell_error ~= 0 then
         cwarn('Failed to send command. Is "' .. ftopt[ft].app .. '" running?')
     end
@@ -576,10 +574,8 @@ end
 local function send_cmd_tmux(ft, txt)
     vim.notify("send_cmd_tmux [" .. app_pane[ft] .. "]: " .. ft .. " " .. txt)
 
-    local scmd = "tmux set-buffer '" .. txt .. "\13'"
-    vim.fn.system(scmd)
-    scmd = "tmux paste-buffer -t " .. app_pane[ft]
-    vim.fn.system(scmd)
+    vim.fn.system({ "tmux", "set-buffer", txt .. "\r" })
+    vim.fn.system({ "tmux", "paste-buffer", "-t", vim.trim(app_pane[ft]) })
     if vim.v.shell_error ~= 0 then
         cwarn('Failed to send command. Is "' .. ftopt[ft].app .. '" running?')
         app_pane[ft] = nil
