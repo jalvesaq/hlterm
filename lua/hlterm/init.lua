@@ -298,6 +298,14 @@ local function start_zellij(ft)
     end
 end
 
+local function set_term_width()
+    local ww = vim.api.nvim_win_get_width(0)
+    if config.term_width == 0 then
+        config.term_width = ww > 160 and 80 or math.floor(ww / 2)
+    end
+    return ww
+end
+
 ---Start the REPL in a Tmux pane
 ---@param ft string The file type
 local function start_tmux(ft)
@@ -306,13 +314,10 @@ local function start_tmux(ft)
         return
     end
 
-    local tcmd = 'tmux split-window -d -t $TMUX_PANE -P -F "#{pane_id}" '
+    local tcmd = "tmux split-window -d -t " .. vim.env.TMUX_PANE .. ' -P -F "#{pane_id}" '
     if config.vsplit then
-        if config.term_width == -1 then
-            tcmd = tcmd .. "-h"
-        else
-            tcmd = tcmd .. "-h -l " .. config.term_width
-        end
+        set_term_width()
+        tcmd = tcmd .. "-h -l " .. config.term_width
     else
         tcmd = tcmd .. "-l " .. config.term_height
     end
@@ -353,10 +358,7 @@ local function start_nvim(ft)
     local edbuf = vim.api.nvim_get_current_buf()
     vim.o.switchbuf = "useopen"
     if config.vsplit then
-        local ww = vim.api.nvim_win_get_width(0)
-        if config.term_width == 0 then
-            config.term_width = ww > 160 and 80 or math.floor(ww / 2)
-        end
+        local ww = set_term_width()
         if config.term_width > 16 and config.term_width < (ww - 16) then
             vim.cmd("belowright " .. config.term_width .. "vnew")
         else
@@ -572,8 +574,6 @@ end
 ---@param ft string File type
 ---@param txt string Text to be sent
 local function send_cmd_tmux(ft, txt)
-    vim.notify("send_cmd_tmux [" .. app_pane[ft] .. "]: " .. ft .. " " .. txt)
-
     vim.fn.system({ "tmux", "set-buffer", txt .. "\r" })
     vim.fn.system({ "tmux", "paste-buffer", "-t", vim.trim(app_pane[ft]) })
     if vim.v.shell_error ~= 0 then
