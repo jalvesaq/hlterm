@@ -186,7 +186,7 @@ local function quartolng()
         vim.cmd.source(scrpt)
         return lng
     else
-        cwarn('vimhlterm does not support file of type "' .. lng .. '"')
+        cwarn('hlterm does not support file of type "' .. lng .. '"')
         return "none"
     end
 end
@@ -476,8 +476,6 @@ function M.start_app(ft)
     if ft == "quarto" then
         ft = quartolng()
         if ft == "none" then return end
-    elseif ft == "python" then
-        vim.env.PYTHON_BASIC_REPL = "1"
     end
 
     if not ftopt[ft] then

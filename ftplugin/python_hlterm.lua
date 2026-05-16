@@ -19,9 +19,17 @@ local function source_lines(lines)
     end
 end
 
+local py_exe = vim.fn.executable("python3") == 1 and "python3" or "python"
+-- if py_exe == "python3" then
+--     local o = vim.system({ "python3", "--version" }, { text = true }):wait()
+--     if o.stdout > "Python 3.13.9\n" then
+--         py_exe = "env PYTHON_BASIC_REPL=1 python3"
+--     end
+-- end
+
 require("hlterm").set_ft_opts("python", {
     nl = "\n",
-    app = vim.fn.executable("python3") == 1 and "python3" or "python",
+    app = py_exe,
     quit_cmd = "quit()",
     source_fun = source_lines,
     send_empty = true,

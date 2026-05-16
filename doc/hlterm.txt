@@ -20,6 +20,7 @@ Author: Jakson A. Aquino <jalvesaq@gmail.com>
         Set the application to run as interpreter
         Set actions for each interpreter
         Run interpreter in external terminal
+ 4. Known bug                                                     |hlterm_bug|
 
 
 ==============================================================================
@@ -245,6 +246,20 @@ example:
  tmux_conf = "~/hlterm_tmux.conf"
 <
 
+==============================================================================
+4. Known bug                                                      *hlterm_bug*
 
+if you get "IndentationError: unexpected indent" when sending lines to Python,
+you could try this:
+>lua
+ require('hlterm').setup({
+     app = {
+         python = "env PYTHON_BASIC_REPL=1 python3",
+     },
+ })
+<
+For more information, see https://github.com/jalvesaq/hlterm/issues/113 and
+https://github.com/jalvesaq/hlterm/issues/114
+<
 
                          vim:tw=78:ts=8:ft=help:norl
