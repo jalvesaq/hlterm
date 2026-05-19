@@ -1,4 +1,4 @@
-local config = require("hlterm").real_setup()
+local config = require("hlterm.config").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.m"

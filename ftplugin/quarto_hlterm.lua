@@ -1,4 +1,4 @@
-local config = require("hlterm").real_setup()
+local config = require("hlterm.config").real_setup()
 
 vim.api.nvim_buf_set_keymap(
     0,
