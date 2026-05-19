@@ -165,11 +165,6 @@ end
 ---@param ft string File type
 ---@param opts HlTermFTOpt Options
 function M.set_ft_opts(ft, opts)
-    if ft == "quarto" then
-        ft = require("hlterm.quarto").get_language()
-        if ft == "none" then return end
-    end
-
     if vim.tbl_contains(vim.tbl_keys(config.app), ft) then
         opts["app"] = config.app[ft]
     end

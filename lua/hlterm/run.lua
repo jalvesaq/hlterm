@@ -179,6 +179,10 @@ end
 ---Run the interpreter in a Neovim terminal buffer
 ---@param ft string The file type
 local function start_nvim(ft)
+    if vim.bo.filetype == "quarto" then
+        ft = quartolng()
+        if ft == "none" then return end
+    end
     if vim.tbl_contains(jobs, ft) then return end
 
     local edbuf = vim.api.nvim_get_current_buf()
@@ -303,15 +307,16 @@ end
 ---Common procedure to start the interpreter
 ---@param ft string File type
 function M.start_app(ft)
+    local ft2 = ft
     if ft == "quarto" then
-        ft = quartolng()
-        if ft == "none" then return end
+        ft2 = quartolng()
+        if ft2 == "none" then return end
     end
 
-    if not ftopt[ft] then
+    if not ftopt[ft2] then
         hlwarn(
             'There is no application defined to be executed for file of type "'
-                .. ft
+                .. ft2
                 .. '"'
         )
         return
@@ -322,13 +327,13 @@ function M.start_app(ft)
     if vim.fn.isdirectory(config.tmp_dir) == 0 then vim.fn.mkdir(config.tmp_dir) end
 
     if config.external_term_cmd then
-        start_exterm(ft)
+        start_exterm(ft2)
     elseif config.use_tmux then
-        start_tmux(ft)
+        start_tmux(ft2)
     elseif config.use_zellij then
-        start_zellij(ft)
+        start_zellij(ft2)
     else
-        start_nvim(ft)
+        start_nvim(ft2)
     end
 end
 
