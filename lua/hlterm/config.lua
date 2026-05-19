@@ -156,7 +156,7 @@ function M.real_setup()
         vim.api.nvim_set_hl(0, "hlterm" .. k, v)
     end
 
-    vim.cmd("autocmd VimLeave * lua require('hlterm').leave()")
+    vim.cmd("autocmd VimLeave * lua require('hlterm.run').leave()")
 
     return config
 end
