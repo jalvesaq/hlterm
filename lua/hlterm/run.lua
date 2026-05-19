@@ -3,7 +3,7 @@ local jobs = {}
 local term_buf = {}
 local app_pane = {}
 local config = require("hlterm.config").get_config()
-local ftopt = require("hlterm.config").ftopt
+local ftopt = require("hlterm.config").get_ft_opts()
 local quartolng = require("hlterm.quarto").get_language
 local hlwarn = require("hlterm").warn
 
@@ -210,9 +210,9 @@ end
 ---Create maps
 ---@param ft string File type
 local function create_maps(ft)
-    if ft == "quarto" then
-        ft = quartolng()
-        if ft == "none" then return end
+    if vim.bo.filetype == "quarto" then
+        if quartolng() == "none" then return end
+        ft = "quarto"
     end
 
     vim.api.nvim_buf_set_keymap(

@@ -1,4 +1,14 @@
 local config = require("hlterm.config").real_setup()
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    config.mappings.start,
+    "<Cmd>lua require('hlterm.run').start_app('typescript')<CR>",
+    {}
+)
+
+local ftopt = require("hlterm.config").get_ft_opts()
+if vim.tbl_contains(vim.tbl_keys(ftopt), "typescript") then return end
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.js"
@@ -7,7 +17,10 @@ local function source_lines(lines)
     -- file won't be loaded again.
     local clear_cache_command = "delete require.cache[require.resolve('" .. f .. "')]; "
     local source_file_command = "require('" .. f .. "');"
-    require("hlterm.run").send_cmd("typescript", clear_cache_command .. source_file_command)
+    require("hlterm.run").send_cmd(
+        "typescript",
+        clear_cache_command .. source_file_command
+    )
 end
 
 require("hlterm.config").set_ft_opts("typescript", {
@@ -18,11 +31,3 @@ require("hlterm.config").set_ft_opts("typescript", {
     send_empty = false,
     syntax = { match = {}, keyword = {} },
 })
-
-vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    config.mappings.start,
-    "<Cmd>lua require('hlterm.run').start_app('typescript')<CR>",
-    {}
-)

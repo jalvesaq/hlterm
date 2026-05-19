@@ -2,6 +2,16 @@
 if vim.bo.filetype:find("sage") then return end
 
 local config = require("hlterm.config").real_setup()
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    config.mappings.start,
+    "<Cmd>lua require('hlterm.run').start_app('python')<CR>",
+    {}
+)
+
+local ftopt = require("hlterm.config").get_ft_opts()
+if vim.tbl_contains(vim.tbl_keys(ftopt), "python") then return end
 
 local ipython = false
 if config.app.python and config.app.python == "ipython" then ipython = true end
@@ -44,11 +54,3 @@ require("hlterm.config").set_ft_opts("python", {
     },
     string_delimiter = "'",
 })
-
-vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    config.mappings.start,
-    "<Cmd>lua require('hlterm.run').start_app('python')<CR>",
-    {}
-)

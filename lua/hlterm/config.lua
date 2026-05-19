@@ -104,7 +104,7 @@ local config = {
 local M = {}
 
 ---@type HlTermFTOpt[]
-M.ftopt = {}
+local ftopt = {}
 
 local did_setup = false
 
@@ -173,11 +173,15 @@ function M.set_ft_opts(ft, opts)
     if vim.tbl_contains(vim.tbl_keys(config.app), ft) then
         opts["app"] = config.app[ft]
     end
-    M.ftopt[ft] = opts
+    ftopt[ft] = opts
 end
 
 ---Get configuration table
 ---@return HlTermUserOpts
 function M.get_config() return config end
+
+---Get configuration table
+---@return HlTermUserOpts
+function M.get_ft_opts() return ftopt end
 
 return M
