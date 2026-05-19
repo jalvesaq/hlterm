@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.hs"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("haskell", ":load " .. f)
+    require("hlterm.run").send_cmd("haskell", ":load " .. f)
 end
 
-require("hlterm").set_ft_opts("haskell", {
+require("hlterm.config").set_ft_opts("haskell", {
     nl = "\n",
     app = vim.fn.executable("stack") == 1 and "stack ghci" or "ghci",
     quit_cmd = ":quit",
@@ -25,6 +25,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('haskell')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('haskell')<CR>",
     {}
 )

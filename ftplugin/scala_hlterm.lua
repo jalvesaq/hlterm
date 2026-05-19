@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.scala"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("scala", ':load "' .. f .. '"')
+    require("hlterm.run").send_cmd("scala", ':load "' .. f .. '"')
 end
 
-require("hlterm").set_ft_opts("scala", {
+require("hlterm.config").set_ft_opts("scala", {
     nl = "\n",
     app = "scala",
     quit_cmd = "sys.exit",
@@ -19,6 +19,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('scala')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('scala')<CR>",
     {}
 )

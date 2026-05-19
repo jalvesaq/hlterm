@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.m2"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("Macaulay2", 'input "' .. f .. '"')
+    require("hlterm.run").send_cmd("Macaulay2", 'input "' .. f .. '"')
 end
 
-require("hlterm").set_ft_opts("Macaulay2", {
+require("hlterm.config").set_ft_opts("Macaulay2", {
     nl = "\n",
     app = "M2",
     quit_cmd = "exit",
@@ -25,6 +25,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('Macaulay2')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('Macaulay2')<CR>",
     {}
 )

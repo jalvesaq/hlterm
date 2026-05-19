@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.sh"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("sh", ". " .. f)
+    require("hlterm.run").send_cmd("sh", ". " .. f)
 end
 
-require("hlterm").set_ft_opts("sh", {
+require("hlterm.config").set_ft_opts("sh", {
     nl = "\n",
     app = "sh",
     quit_cmd = "exit",
@@ -26,6 +26,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('sh')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('sh')<CR>",
     {}
 )

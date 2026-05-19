@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.pl"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("prolog", "consult('" .. f .. "')")
+    require("hlterm.run").send_cmd("prolog", "consult('" .. f .. "')")
 end
 
-require("hlterm").set_ft_opts("prolog", {
+require("hlterm.config").set_ft_opts("prolog", {
     nl = "\n",
     app = "swipl",
     quit_cmd = "halt.",
@@ -25,6 +25,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('prolog')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('prolog')<CR>",
     {}
 )

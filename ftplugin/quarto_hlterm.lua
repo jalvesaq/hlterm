@@ -1,9 +1,9 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('quarto')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('quarto')<CR>",
     {}
 )

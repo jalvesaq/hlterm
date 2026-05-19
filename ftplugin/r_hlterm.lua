@@ -1,15 +1,15 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.R"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd(
+    require("hlterm.run").send_cmd(
         "r",
         "base::source('" .. f .. "', local = parent.frame(), print.eval = TRUE)"
     )
 end
 
-require("hlterm").set_ft_opts("r", {
+require("hlterm.config").set_ft_opts("r", {
     nl = "\n",
     app = "R",
     quit_cmd = 'quit(save = "no")',
@@ -36,6 +36,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('r')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('r')<CR>",
     {}
 )

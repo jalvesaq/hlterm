@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.q"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("kdb", "\\l" .. f)
+    require("hlterm.run").send_cmd("kdb", "\\l" .. f)
 end
 
-require("hlterm").set_ft_opts("kdb", {
+require("hlterm.config").set_ft_opts("kdb", {
     nl = "\n",
     -- `app` should not be an expression like 'rlwrap q' to do this create a
     -- script, add it to your PATH and set b:hltermapp accordingly
@@ -21,6 +21,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('kdb')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('kdb')<CR>",
     {}
 )

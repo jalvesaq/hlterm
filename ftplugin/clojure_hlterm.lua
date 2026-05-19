@@ -1,12 +1,12 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.clj"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("clojure", '(load-file "' .. f .. '")')
+    require("hlterm.run").send_cmd("clojure", '(load-file "' .. f .. '")')
 end
 
-require("hlterm").set_ft_opts("clojure", {
+require("hlterm.config").set_ft_opts("clojure", {
     nl = "\n",
     app = "lein repl",
     quit_cmd = "(quit)",
@@ -19,6 +19,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('clojure')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('clojure')<CR>",
     {}
 )

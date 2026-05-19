@@ -1,4 +1,4 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm").real_setup()
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.js"
@@ -7,10 +7,10 @@ local function source_lines(lines)
     -- file won't be loaded again.
     local clear_cache_command = "delete require.cache[require.resolve('" .. f .. "')]; "
     local source_file_command = "require('" .. f .. "');"
-    require("hlterm").send_cmd("javascript", clear_cache_command .. source_file_command)
+    require("hlterm.run").send_cmd("javascript", clear_cache_command .. source_file_command)
 end
 
-require("hlterm").set_ft_opts("javascript", {
+require("hlterm.config").set_ft_opts("javascript", {
     nl = "\n",
     app = "node",
     quit_cmd = ".exit",
@@ -29,6 +29,6 @@ vim.api.nvim_buf_set_keymap(
     0,
     "n",
     config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('javascript')<CR>",
+    "<Cmd>lua require('hlterm.run').start_app('javascript')<CR>",
     {}
 )
