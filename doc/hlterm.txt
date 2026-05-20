@@ -161,7 +161,8 @@ Some languages don't have a dedicated command to source external scripts
 concatenated and sent directly to the interpreter. Depending on the
 interpreter and terminal emulator, bracketed paste might or might not be
 required. If your interpreter requires bracketed paste, you might add its
-'filetype' to the `bracketed_paste` table. Example:
+'filetype' to the `bracketed_paste` table which, by default, only includes
+"python":
 >lua
  bracketed_paste = { "python" },
 <

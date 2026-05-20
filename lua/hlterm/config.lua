@@ -60,7 +60,7 @@
 local config = {
     vsplit = false,
     esc_term = true,
-    bracketed_paste = {},
+    bracketed_paste = { "python" },
     use_zellij = false,
     use_tmux = false,
     term_height = 15,
