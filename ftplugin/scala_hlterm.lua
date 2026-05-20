@@ -1,12 +1,22 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm.config").real_setup()
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    config.mappings.start,
+    "<Cmd>lua require('hlterm.run').start_app('scala')<CR>",
+    {}
+)
+
+local ftopt = require("hlterm.config").get_ft_opts()
+if vim.tbl_contains(vim.tbl_keys(ftopt), "scala") then return end
 
 local function source_lines(lines)
     local f = config.tmp_dir .. "/lines.scala"
     vim.fn.writefile(lines, f)
-    require("hlterm").send_cmd("scala", ':load "' .. f .. '"')
+    require("hlterm.run").send_cmd("scala", ':load "' .. f .. '"')
 end
 
-require("hlterm").set_ft_opts("scala", {
+require("hlterm.config").set_ft_opts("scala", {
     nl = "\n",
     app = "scala",
     quit_cmd = "sys.exit",
@@ -14,11 +24,3 @@ require("hlterm").set_ft_opts("scala", {
     send_empty = false,
     syntax = { match = {}, keyword = {} },
 })
-
-vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('scala')<CR>",
-    {}
-)

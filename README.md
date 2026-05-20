@@ -12,8 +12,10 @@ Clojure, Golang, Haskell, JavaScript, Julia, Jupyter, Kotlin, Lisp,
 Lua, Macaulay2, Matlab, Prolog, Python, R, Racket, Ruby, Sage,
 Scala, Shell script, Swift, Kdb/q and TypeScript
 (see [R.nvim] for a more compreehsive support for R in Neovim).
+
 If the file type is `quarto`, `hlterm` will try to infer what interpreter
-should be started.
+should be started, but it will work for two or more interpreters only if using
+Neovim's built-in terminal emulator (the default).
 
 The interpreter runs in Neovim's built-in terminal.
 If Tmux or Zellij is installed, the interpreter can also run in

@@ -1,10 +1,18 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm.config").real_setup()
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    config.mappings.start,
+    "<Cmd>lua require('hlterm.run').start_app('magma')<CR>",
+    {}
+)
 
-local function source_lines(lines)
-    require("hlterm").send_cmd("magma", vim.fn.join(lines, "\n"))
-end
+local ftopt = require("hlterm.config").get_ft_opts()
+if vim.tbl_contains(vim.tbl_keys(ftopt), "magma") then return end
 
-require("hlterm").set_ft_opts("magma", {
+local function source_lines(lines) require("hlterm.run").send_mlines("magma", lines) end
+
+require("hlterm.config").set_ft_opts("magma", {
     nl = "\n",
     app = "magma",
     quit_cmd = "quit;",
@@ -12,11 +20,3 @@ require("hlterm").set_ft_opts("magma", {
     send_empty = true,
     syntax = { match = {}, keyword = {} },
 })
-
-vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('magma')<CR>",
-    {}
-)

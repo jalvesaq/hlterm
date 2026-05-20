@@ -1,11 +1,18 @@
-local config = require("hlterm").get_config()
+local config = require("hlterm.config").real_setup()
+vim.api.nvim_buf_set_keymap(
+    0,
+    "n",
+    config.mappings.start,
+    "<Cmd>lua require('hlterm.run').start_app('kotlin')<CR>",
+    {}
+)
 
-local function source_lines(lines)
-    table.insert(lines, "")
-    require("hlterm").send_cmd("kotlin", vim.fn.join(lines, "\n"))
-end
+local ftopt = require("hlterm.config").get_ft_opts()
+if vim.tbl_contains(vim.tbl_keys(ftopt), "kotlin") then return end
 
-require("hlterm").set_ft_opts("kotlin", {
+local function source_lines(lines) require("hlterm.run").send_mlines("kotlin", lines) end
+
+require("hlterm.config").set_ft_opts("kotlin", {
     nl = "\n",
     app = "kotlin-jvm",
     quit_cmd = ":quit",
@@ -19,11 +26,3 @@ require("hlterm").set_ft_opts("kotlin", {
         keyword = {},
     },
 })
-
-vim.api.nvim_buf_set_keymap(
-    0,
-    "n",
-    config.mappings.start,
-    "<Cmd>lua require('hlterm').start_app('kotlin')<CR>",
-    {}
-)

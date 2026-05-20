@@ -47,7 +47,8 @@ If you are editing one of the supported file types, in Normal mode do:
   - <LocalLeader><Enter> to send the current line to the interpreter and
     keep the cursor on the current line.
 
-  - <LocalLeader>q to send the quit command to the interpreter.
+  - <LocalLeader>q to send the quit command to the interpreter (not available
+    for Quarto documents).
 
 
   - In Visual mode, press:
@@ -154,6 +155,18 @@ the interpreter, put in your config:
 >lua
  esc_term = false,
 <
+
+Some languages don't have a dedicated command to source external scripts
+(Kotlin, Magma, Python, and Swift). For these languages, multiple lines are
+concatenated and sent directly to the interpreter. Depending on the
+interpreter and terminal emulator, bracketed paste might or might not be
+required. If your interpreter requires bracketed paste, you might add its
+'filetype' to the `bracketed_paste` table which, by default, only includes
+"python":
+>lua
+ bracketed_paste = { "python" },
+<
+
 If you are running Neovim, the interpreter will be started in its built-in
 terminal. If you prefer to start it in a Tmux or Zellij split pane, put in your
 config one of these options:
