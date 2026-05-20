@@ -30,6 +30,7 @@
 ---@class HlTermUserOpts
 ---@field vsplit? boolean Whether to split the window vertically
 ---@field esc_term? boolean Whether to map <Esc> in the terminal to go to Normal mode
+---@field bracketed_paste? string[] List of filetypes that require bracket paste for multiple lines
 ---@field use_zellij? boolean Start the interpreter in a Zellij pane
 ---@field use_tmux? boolean Start the interpreter in a Tmux pane
 ---@field tmux_conf? string Path to custom Tmux configuration file
@@ -59,6 +60,7 @@
 local config = {
     vsplit = false,
     esc_term = true,
+    bracketed_paste = {},
     use_zellij = false,
     use_tmux = false,
     term_height = 15,

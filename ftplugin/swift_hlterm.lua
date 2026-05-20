@@ -10,10 +10,7 @@ vim.api.nvim_buf_set_keymap(
 local ftopt = require("hlterm.config").get_ft_opts()
 if vim.tbl_contains(vim.tbl_keys(ftopt), "swift") then return end
 
-local function source_lines(lines)
-    table.insert(lines, "")
-    require("hlterm.run").send_cmd("swift", vim.fn.join(lines, "\n"))
-end
+local function source_lines(lines) require("hlterm.run").send_mlines("swift", lines) end
 
 require("hlterm.config").set_ft_opts("swift", {
     nl = "\n",

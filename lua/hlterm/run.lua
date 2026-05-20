@@ -473,6 +473,18 @@ function M.send_cmd(ft, txt)
     end
 end
 
+--- Send multiple lines to interpreter
+---@param ft string File type
+---@param lines string[] Lines of code to send
+function M.send_mlines(ft, lines)
+    table.insert(lines, "")
+    local block = vim.fn.join(lines, ftopt[ft].nl)
+    if vim.tbl_contains(config.bracketed_paste, ft) then
+        block = "\027[200~" .. block .. "\027[201~"
+    end
+    M.send_cmd(ft, block)
+end
+
 -- Send current line to the interpreter
 ---@param ft string File type
 ---@param move boolean Whether to go to the next line

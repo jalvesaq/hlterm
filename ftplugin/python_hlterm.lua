@@ -23,13 +23,13 @@ local function source_lines(lines)
         table.insert(lines, "--")
         require("hlterm.run").send_cmd("python", vim.fn.join(lines, "\n"))
     else
-        -- Use bracketed paste
-        local block = vim.fn.join(lines, "\n")
-        require("hlterm.run").send_cmd("python", "\027[200~" .. block .. "\027[201~\n")
+        require("hlterm.run").send_mlines("python", lines)
     end
 end
 
 local py_exe = vim.fn.executable("python3") == 1 and "python3" or "python"
+
+-- See: https://github.com/jalvesaq/hlterm/issues/114#issuecomment-4489377763
 -- if py_exe == "python3" then
 --     local o = vim.system({ "python3", "--version" }, { text = true }):wait()
 --     if o.stdout > "Python 3.13.9\n" then
