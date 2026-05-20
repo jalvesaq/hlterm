@@ -47,7 +47,8 @@ If you are editing one of the supported file types, in Normal mode do:
   - <LocalLeader><Enter> to send the current line to the interpreter and
     keep the cursor on the current line.
 
-  - <LocalLeader>q to send the quit command to the interpreter.
+  - <LocalLeader>q to send the quit command to the interpreter (not available
+    for Quarto documents).
 
 
   - In Visual mode, press:
